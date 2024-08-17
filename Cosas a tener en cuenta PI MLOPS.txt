@@ -1,0 +1,47 @@
+Para aprobar este proyecto, es crucial centrarse en los puntos clave que son fundamentales para cumplir con los requerimientos mínimos y asegurar que todas las partes del trabajo estén completas. Aquí te resumo los puntos clave:
+
+1. Transformación de Datos (ETL):
+Desanidar campos como belongs_to_collection y production_companies para facilitar las consultas.
+Rellenar valores nulos en revenue y budget con 0.
+Eliminar valores nulos en release date.
+Estandarizar formato de fechas a AAAA-mm-dd y crear la columna release_year.
+Crear la columna return calculando el retorno de inversión como revenue / budget.
+Eliminar columnas innecesarias: video, imdb_id, adult, original_title, poster_path, homepage.
+
+2. Desarrollo de la API:
+Framework FastAPI para disponibilizar los datos.
+Endpoints a desarrollar:
+cantidad_filmaciones_mes(Mes)
+cantidad_filmaciones_dia(Dia)
+score_titulo(titulo_de_la_filmación)
+votos_titulo(titulo_de_la_filmación)
+get_actor(nombre_actor)
+get_director(nombre_director)
+Extra: recomendacion(titulo) para recomendar películas similares.
+
+3. Deployment de la API:
+Desplegar la API en un servicio como Render, Railway, u otro que permita consumirla desde la web.
+Asegurar que la API esté disponible públicamente.
+4. Análisis Exploratorio de Datos (EDA):
+Realizar un EDA para investigar relaciones, outliers y patrones en los datos.
+Generar visualizaciones: nubes de palabras para ver frecuencias en los títulos, gráficos que identifiquen patrones interesantes.
+
+5. Sistema de Recomendación:
+Desarrollar un sistema de recomendación basado en la similitud de puntuaciones entre películas.
+La función recomendacion(titulo) debe devolver una lista de 5 películas similares.
+
+6. Video de Demostración:
+Crear un video de máximo 7 minutos mostrando:
+Funcionalidad de las consultas desde la API.
+Explicación breve del modelo de Machine Learning utilizado para el sistema de recomendación.
+Extra: Si sobra tiempo, incluir una breve explicación del EDA, ETL, y el desarrollo de la API.
+
+7. Criterios de Evaluación:
+Prolijidad del código: uso de funciones, clases y comentarios.
+Organización del repositorio: nombres adecuados, estructura de carpetas, y un README.md claro y conciso que explique el proyecto.
+Cumplimiento de los requerimientos especificados en la propuesta de trabajo.
+
+8. Entrega Final:
+Asegúrate de que el video sea accesible (público) y de incluir el link en tu entrega final.
+Verifica el cumplimiento de todos los puntos anteriores antes de la entrega.
+Estos son los puntos clave que debes asegurarte de cumplir para aprobar el proyecto. Si los cubres bien, estarás en una buena posición para tener éxito. ¡Buena suerte!
