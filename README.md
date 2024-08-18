@@ -1,79 +1,103 @@
-### Sistema de Recomendación de Películas
-Este proyecto tiene como objetivo desarrollar un sistema de recomendación de películas utilizando técnicas de machine learning. A lo largo del proyecto, se ha trabajado con varios datasets, como dfmovies y dfcredits, que contienen información sobre películas, sus características, y el reparto involucrado. A continuación se detallan los pasos realizados hasta ahora.
+# Proyecto de Recomendación de Películas
 
-## 1. Preparación del Dataset dfmovies - ETL
+Este proyecto tiene como objetivo construir un sistema de recomendación de películas utilizando datos obtenidos de un dataset de películas y créditos cinematográficos. Se aplica un proceso de ETL (Extracción, Transformación y Carga) seguido de un análisis exploratorio de datos (EDA) y la construcción de un modelo de recomendación desplegado a través de una API. Los endpoints permiten la consulta de recomendaciones, detalles de películas y estadísticas de directores y actores.
 
-1.1 Limpieza de Datos
-Manejo de Valores Nulos:
-budget y revenue: Se reemplazaron los valores nulos por 0.
-release_date: Se eliminaron las filas con valores nulos en esta columna.
-runtime: Se identificaron y manejaron valores nulos, aunque algunos valores nulos pueden persistir.
-Conversión de Tipos de Datos:
-Las columnas budget y revenue fueron convertidas a enteros para facilitar cálculos y análisis.
-Se creó la columna release_year extrayendo el año de release_date.
+## Tabla de Contenido
 
-1.2 Estandarización y Normalización
-Las columnas numéricas como budget, revenue, popularity, vote_average, vote_count, y runtime fueron preparadas para ser estandarizadas o normalizadas en futuras etapas del modelado.
+- [Introducción](#introducción)
+- [Instalación y Requisitos](#instalación-y-requisitos)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Uso y Ejecución](#uso-y-ejecución)
+- [Datos y Fuentes](#datos-y-fuentes)
+- [Metodología](#metodología)
+- [Resultados y Conclusiones](#resultados-y-conclusiones)
+- [Contribución y Colaboración](#contribución-y-colaboración)
+- [Licencia](#licencia)
 
-1.3 Manejo de Datos Categóricos
-Extracción de Datos de Campos Complejos:
-belongs_to_collection: Se extrajo el nombre de la colección a partir de diccionarios y se creó una nueva columna nombre_coleccion.
-genres: Se extrajeron los nombres de los géneros desde una lista de diccionarios y se creó la columna generos.
-production_countries, production_companies, spoken_languages: Se extrajeron y consolidaron los nombres relevantes de estas listas de diccionarios.
+## Introducción
 
-Filtrado de Filas:
-Se filtraron filas para excluir datos irrelevantes o no disponibles, asegurando que solo se retengan filas con información significativa.
+El objetivo de este proyecto es implementar un sistema de recomendación de películas basado en la similitud de características como calificaciones (`vote_average`, `vote_count`), géneros y descripciones de películas. El sistema está disponible a través de una API para consultas sobre recomendaciones y estadísticas de películas, directores y actores.
 
-## 2. Preparación del Dataset dfcredits
+## Instalación y Requisitos
 
-2.1 Limpieza de Datos
-Extracción de Información Relevante:
-cast: Se extrajeron los nombres de los actores y sus respectivos cast_id de una lista de diccionarios.
-crew: Se extrajeron los nombres de los directores y sus id de una lista de diccionarios. Si no había un director, se marcó como "Sin director".
+### Requisitos
 
-2.2 Unión de Datos
-Se creó un nuevo DataFrame dfcredits_reducido que incluye:
-Nombre de los actores (actor_name).
-Nombre del director (director_name) y su director_id.
-El movie_id para relacionar con otros datos.
+- **Python 3.7 o superior**
+- Librerías necesarias: `pandas`, `numpy`, `scikit-learn`, `fastapi`, `uvicorn`
+### Instalación:
 
-2.3 Manejo de Valores Nulos
-Se manejaron valores nulos en las columnas director_name y director_id, aunque algunos valores nulos en director_id persisten.
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/usuario/proyecto-recomendacion-peliculas.git
+Crear un entorno virtual:
+python -m venv venv
 
-## 3. Preparación para el Modelado
-. Preprocesamiento de textos
-Antes de pasar al modelado de machine learning, es necesario preprocesar los textos:
+Activar el entorno virtual:
+Windows: venv\Scripts\activate
+macOS/Linux: source venv/bin/activate
 
-Minúsculas: Convertir todo a minúsculas.
-Eliminar signos de puntuación.
-Eliminar números.
-Eliminar palabras vacías (stopwords).
-Tokenización, stemming o lematización (dependiendo de lo que prefieras).
+Instalar las dependencias:
+pip install -r requirements.txt
 
-3.1 Revisión de Datos
-Verificación de Valores Nulos:
-Se realizó una revisión para identificar y manejar valores nulos restantes en las columnas clave antes de iniciar el modelado.
-Ingeniería de Características:
-Se evaluó la posibilidad de crear nuevas características derivadas para mejorar el rendimiento del modelo de recomendación.
+Estructura del Proyecto
+notebooks/: Contiene el ETL, EDA y modelo de machine learning.
+Datasets/: Archivos de datos procesados en formato Parquet.
+src/: Código fuente del proyecto, incluyendo el código de la API.
+README.md: Documentación del proyecto.
 
-3.2 Planificación del Modelado
-Se planificó la normalización y estandarización de las columnas relevantes.
-Se consideraron estrategias para manejar datos categóricos, como one-hot encoding.
+Uso y Ejecución
+Para ejecutar el ETL, EDA y el modelo de machine learning, abre los notebooks en la carpeta notebooks/.
 
-## 4. Próximos Pasos
-Revisión Completa del Pipeline de Datos:
+Para iniciar la API:
+uvicorn src.main:app --reload
 
-Revisar todo el proceso de limpieza y transformación de datos para asegurarse de que no haya errores antes de proceder al modelado.
-Implementación del Sistema de Recomendación:
+ETL (Extracción, Transformación y Carga)
+Procesos Relevantes:
+Se realiza la limpieza de columnas innecesarias, corrección de datos numéricos y fechas.
+Se extraen y limpian campos complejos como géneros, empresas de producción, países e idiomas hablados.
+Se combinan y deduplican los datasets de películas y créditos, unificando la información de actores y directores.
+Se filtran películas únicamente en inglés para simplificar el modelo.
 
-Seleccionar y entrenar modelos de machine learning.
-Evaluar el rendimiento del modelo utilizando métricas apropiadas para sistemas de recomendación.
-Optimización y Validación:
+Criterios Clave:
+Se eliminan duplicados para evitar múltiples registros de la misma película.
+Se extraen los nombres de actores y directores de listas anidadas.
+Se priorizan registros con más datos completos (presupuesto, ingresos, fecha de lanzamiento).
 
-Realizar tuning de hiperparámetros y utilizar validación cruzada para mejorar la precisión del modelo.
+EDA (Análisis Exploratorio de Datos)
+Objetivos:
+Comprender la distribución de las películas por año, presupuesto y popularidad.
+Identificar actores y directores más frecuentes en las películas.
+Examinar la correlación entre las características como ingresos, presupuesto, y votaciones.
 
-Usar Aproximaciones para la Similitud
-En lugar de calcular la similitud coseno exacta, puedes usar algoritmos de similitud aproximada como Annoy, FAISS, o HNSWlib. Estos algoritmos son mucho más eficientes y están diseñados para manejar grandes volúmenes de datos. dado que con otras herramientas me arrojaba errores por cuestiones de espacio
+Conclusiones Relevantes:
+Se identificaron patrones en el rendimiento de las películas según su presupuesto y popularidad.
+Se detectó una fuerte concentración de actores recurrentes en las películas más populares.
 
-FAISS (Facebook AI Similarity Search):
-FAISS es una biblioteca desarrollada por Facebook para realizar búsquedas eficientes y rápidas de similitud en vectores de alta dimensión. Puedes cargar los embeddings en FAISS y realizar búsquedas de similitud muy rápido, sin necesidad de mantener toda la matriz de similitud en memoria.
+Modelo de Recomendación
+Descripción:
+El modelo se basa en la similitud de películas utilizando métricas como vote_average y vote_count. Se utiliza la matriz de características normalizadas para calcular las similitudes entre películas y recomendar las más similares a una película dada.
+
+Criterios del Modelo:
+
+Se utiliza cosine_similarity para medir la distancia entre las películas.
+Las recomendaciones se basan en los títulos más cercanos en términos de características.
+Endpoints de la API
+/recomendacion/{titulo}
+Retorna una lista de películas recomendadas basadas en la similitud con el título dado.
+/nombre_actor/{actor}
+Proporciona estadísticas del actor, incluyendo el retorno promedio de sus películas.
+/nombre_director/{director}
+Devuelve información detallada del director, incluyendo el éxito medido por el retorno.
+/score_titulo/{titulo}
+Proporciona el puntaje promedio y el número de votaciones de la película especificada.
+/votos_titulo/{titulo}
+Retorna la cantidad de votos y el puntaje de una película si cuenta con suficiente número de valoraciones.
+Contribución y Colaboración
+Las contribuciones son bienvenidas. Si deseas colaborar, puedes abrir un pull request o reportar problemas en el repositorio.
+
+Licencia
+Este proyecto está bajo la Licencia MIT.
+
+Copy code
+
+Este README destaca los aspectos más importantes de tu proyecto, organizados de manera clara y concisa para ser utilizado en GitHub.
