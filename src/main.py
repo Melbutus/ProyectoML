@@ -13,57 +13,44 @@ app = FastAPI()
 # .\venv\Scripts\activate para activar el entorno
 # uvicorn src.main:app --reload para ejecutar la api
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-'''parquet_files = [
-    'actor_dataset.parquet',
-    'dataset_completo.parquet',
-    'director_dataset.parquet',
-    'features_matrix.parquet',
-    'filmaciones.parquet',
-    'score_titulo.parquet',
-    'votos_titulo.parquet'
-]
+
+'''import os
 
 datasets_dir = 'Datasets'
-if not os.path.exists(datasets_dir):
-    print(f"El directorio {datasets_dir} no existe")
+if os.path.exists(datasets_dir):
+    print(f"Archivos en {datasets_dir}: {os.listdir(datasets_dir)}")
 else:
-    for file_name in parquet_files:
-        file_path = os.path.join(datasets_dir, file_name)
-        if os.path.exists(file_path):
-            print(f"El archivo {file_name} está presente en {datasets_dir}")
-            # Aquí puedes cargar el archivo si es necesario
-            df = pd.read_parquet(file_path)
-        else:
-            print(f"El archivo {file_name} no fue encontrado en {datasets_dir}")
-            # Maneja la ausencia del archivo como prefieras'''
-            
+    print(f"El directorio {datasets_dir} no existe")'''
+    
+# Carga los archivos una vez durante la inicialización de la aplicación
+try:
+    df_filmaciones = pd.read_parquet('Datasets/filmaciones.parquet')
+    df_score = pd.read_parquet('Datasets/score_titulo.parquet')
+    df_votos = pd.read_parquet('Datasets/votos_titulo.parquet')
+    df_actores = pd.read_parquet('Datasets/actor_dataset.parquet')
+    df_directores = pd.read_parquet('Datasets/director_dataset.parquet')
+    df_peliculas = pd.read_parquet('Datasets/dataset_completo.parquet')
+    features_path = pd.read_parquet('Datasets/features_matrix.parquet').values
+    print("Todos los archivos .parquet se cargaron correctamente")
+except Exception as e:
+    print(f"Error al cargar los archivos .parquet: {e}")
 
     
     
 ### Funciones de la API
 
 # 1. Cantidad de filmaciones por mes
-try:
-    df_filmaciones1 = pd.read_parquet('Datasets\\filmaciones.parquet')
-    print("filmaciones.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar filmaciones.parquet: {e}")
 @app.get("/cantidad_filmaciones_mes/{mes}")
 def cantidad_filmaciones_mes(mes: str):
     meses = {'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4, 'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
              'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12}
     mes_num = meses.get(mes.lower())
     if mes_num:
-        count = df_filmaciones1[df_filmaciones1['release_date'].dt.month == mes_num].shape[0]
+        count = df_filmaciones[df_filmaciones['release_date'].dt.month == mes_num].shape[0]
         return {"mensaje": f"{count} películas fueron estrenadas en el mes de {mes.capitalize()}"}
     return {"mensaje": f"Mes '{mes}' no es válido."}
 
 # 2. Cantidad de filmaciones por día
-try:
-    df_filmaciones = pd.read_parquet('Datasets\\filmaciones.parquet')
-    print("filmaciones.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar filmaciones.parquet: {e}")
 @app.get("/cantidad_filmaciones_dia/{dia}")
 def cantidad_filmaciones_dia(dia: str):
     dias = {'lunes': 0, 'martes': 1, 'miércoles': 2, 'jueves': 3, 'viernes': 4, 'sábado': 5, 'domingo': 6}
@@ -74,11 +61,6 @@ def cantidad_filmaciones_dia(dia: str):
     return {"mensaje": f"Día '{dia}' no es válido."}
 
 # 3. Score por título
-try:
-    df_score = pd.read_parquet('Datasets\\score_titulo.parquet')
-    print("score_titulo.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar score_titulo.parquet: {e}")
 @app.get("/score_titulo/{titulo}")
 def score_titulo(titulo: str):
     # Filtrar por título
@@ -96,11 +78,6 @@ def score_titulo(titulo: str):
 
 
 # 4. Votos por título
-try:
-    df_votos = pd.read_parquet('Datasets\\votos_titulo.parquet')
-    print("votos_titulo.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar votos_titulo.parquet: {e}")
 @app.get("/votos_titulo/{titulo}")
 def votos_titulo(titulo: str):
     titulo_normalizado = titulo.strip().lower()
@@ -112,11 +89,6 @@ def votos_titulo(titulo: str):
     return {"mensaje": "Película no encontrada"}
 
 # Función de la API para obtener datos de actores
-try:
-    df_actores = pd.read_parquet('Datasets/actor_dataset.parquet')
-    print("actor_dataset.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar actor_dataset.parquet: {e}")
 @app.get("/get_actor/{nombre_actor}")
 def get_actor(nombre_actor: str):
     try:
@@ -142,11 +114,7 @@ def get_actor(nombre_actor: str):
         return {"mensaje": f"Error interno: {str(e)}"}
     
 
-try:
-    df_directores = pd.read_parquet('Datasets/director_dataset.parquet')
-    print("director_dataset.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar director_dataset.parquet: {e}")
+
 @app.get("/get_director/{nombre_director}")
 def get_director(nombre_director: str):
     try:
@@ -197,12 +165,6 @@ def get_director(nombre_director: str):
     
 # Usar una ruta temporal segura para escribir el archivo y evitar problemas de permisos en render
 # features_path = os.path.join(tempfile.gettempdir(), 'features_matrix.parquet')
-try:
-    features_path = pd.read_parquet('Datasets\\features_matrix.parquet')
-    print("features_matrix.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar features_matrix.parquet: {e}")
-    
 # Cargar o generar el features_matrix en memoria
 def cargar_o_generar_features_matrix():
     features_path = 'Datasets/features_matrix.parquet'
@@ -230,11 +192,6 @@ def cargar_o_generar_features_matrix():
 features_matrix = cargar_o_generar_features_matrix()
 
 # Cargar el dataset de películas
-try:
-    df_peliculas = pd.read_parquet('Datasets\\dataset_completo.parquet')
-    print("dataset_completo.parquet cargado correctamente")
-except Exception as e:
-    print(f"Error al cargar dataset_completo.parquet: {e}")
 @app.get("/recomendacion/{titulo}")
 def recomendacion(titulo: str, n_recomendaciones: int = 5):
     # Normalizamos el título para la búsqueda
