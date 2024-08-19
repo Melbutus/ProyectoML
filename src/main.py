@@ -13,7 +13,7 @@ app = FastAPI()
 
 ### Funciones de la API
 # Cargar la matriz de características preprocesada
-features_matrix = np.load(r'Datasets\features_matrix.npy')
+features_matrix = pd.read_parquet(r'Datasets\features_matrix.parquet')
 
 # 1. Cantidad de filmaciones por mes
 df_filmaciones1 = pd.read_parquet(r'Datasets\filmaciones.parquet')
