@@ -14,13 +14,10 @@ app = FastAPI()
 # uvicorn src.main:app --reload para ejecutar la api
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-'''import os
+@app.get("/")
+def read_root():
+    return {"mensaje": "Bienvenido a la API de recomendaciones de películas."}
 
-datasets_dir = 'Datasets'
-if os.path.exists(datasets_dir):
-    print(f"Archivos en {datasets_dir}: {os.listdir(datasets_dir)}")
-else:
-    print(f"El directorio {datasets_dir} no existe")'''
     
 # Carga los archivos una vez durante la inicialización de la aplicación
 try:
