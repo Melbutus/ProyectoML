@@ -6,6 +6,7 @@ import unidecode
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import os
+import tempfile  # Importa tempfile para gestionar directorios temporales
 
 app = FastAPI()
 
@@ -14,8 +15,6 @@ app = FastAPI()
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 ### Funciones de la API
-# Cargar la matriz de características preprocesada
-features_matrix = pd.read_parquet(r'Datasets\features_matrix.parquet')
 
 # 1. Cantidad de filmaciones por mes
 df_filmaciones1 = pd.read_parquet(r'Datasets\filmaciones.parquet')
@@ -146,9 +145,8 @@ def get_director(nombre_director: str):
     except Exception as e:
         return {"mensaje": f"Error interno: {str(e)}"}
     
-# Usar una ruta temporal segura para escribir el archivo
-features_path = os.path.join('/tmp', 'features_matrix.parquet')
-
+# Usar una ruta temporal segura para escribir el archivo y evitar problemas de permisos en render
+features_path = os.path.join(tempfile.gettempdir(), 'features_matrix.parquet')
 
 # Cargar o generar el features_matrix en memoria
 def cargar_o_generar_features_matrix():
@@ -166,8 +164,7 @@ def cargar_o_generar_features_matrix():
         scaler = MinMaxScaler()
         features_matrix = scaler.fit_transform(features)
         
-        # Guardar la matriz generada para futuras ejecuciones
-        os.makedirs('Datasets', exist_ok=True)
+        # Guardar la matriz generada en el directorio temporal para futuras ejecuciones
         features_df = pd.DataFrame(features_matrix, columns=['vote_average', 'vote_count'])
         features_df.to_parquet(features_path)
         
@@ -207,7 +204,6 @@ def recomendacion(titulo: str, n_recomendaciones: int = 5):
             break
     
     return {"recomendaciones": recomendaciones}
-
 
 
 
