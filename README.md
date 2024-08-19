@@ -100,3 +100,8 @@ Retorna la cantidad de votos y el puntaje de una película si cuenta con suficie
 
 ### Contribución y Colaboración
 Las contribuciones son bienvenidas. Si deseas colaborar, puedes abrir un pull request o reportar problemas en el repositorio.
+
+## **Fuente de datos**
+- + [Dataset](https://drive.google.com/drive/folders/1X_LdCoGTHJDbD28_dJTxaD4fVuQC9Wt5?usp=drive_link): Carpeta con los 2 archivos (movies_dataset.csv y credits.csv).
++ [Diccionario de datos](https://docs.google.com/spreadsheets/d/1QkHH5er-74Bpk122tJxy_0D49pJMIwKLurByOfmxzho/edit#gid=0)
+<br/>
