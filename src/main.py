@@ -11,7 +11,7 @@ app = FastAPI()
 
 # .\venv\Scripts\activate para activar el entorno
 # uvicorn src.main:app --reload para ejecutar la api
-
+# uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 ### Funciones de la API
 # Cargar la matriz de características preprocesada
@@ -145,9 +145,10 @@ def get_director(nombre_director: str):
 
     except Exception as e:
         return {"mensaje": f"Error interno: {str(e)}"}
+    
+# Usar una ruta temporal segura para escribir el archivo
+features_path = os.path.join('/tmp', 'features_matrix.parquet')
 
-# Ruta relativa para el archivo de características
-features_path = os.path.join('Datasets', 'features_matrix.parquet')
 
 # Cargar o generar el features_matrix en memoria
 def cargar_o_generar_features_matrix():
