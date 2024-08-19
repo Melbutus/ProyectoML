@@ -4,6 +4,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import unidecode
 from pathlib import Path
+from sklearn.preprocessing import MinMaxScaler
+import os
 
 app = FastAPI()
 
@@ -144,20 +146,58 @@ def get_director(nombre_director: str):
     except Exception as e:
         return {"mensaje": f"Error interno: {str(e)}"}
 
-# 7. Recomendaciones de películas basadas en similitud
-df_peliculas = pd.read_parquet(r'Datasets\dataset_completo.parquet')
+# Ruta relativa para el archivo de características
+features_path = os.path.join('Datasets', 'features_matrix.parquet')
+
+# Cargar o generar el features_matrix en memoria
+def cargar_o_generar_features_matrix():
+    if os.path.exists(features_path):
+        # Si el archivo existe, cargarlo
+        print(f"Cargando features_matrix desde {features_path}")
+        return pd.read_parquet(features_path).values
+    else:
+        # Generar features_matrix en memoria si el archivo no existe
+        print(f"Archivo no encontrado, generando features_matrix en memoria.")
+        df_peliculas = pd.read_parquet('Datasets/dataset_completo.parquet')
+        
+        # Normalizamos las columnas de interés
+        features = df_peliculas[['vote_average', 'vote_count']]
+        scaler = MinMaxScaler()
+        features_matrix = scaler.fit_transform(features)
+        
+        # Guardar la matriz generada para futuras ejecuciones
+        os.makedirs('Datasets', exist_ok=True)
+        features_df = pd.DataFrame(features_matrix, columns=['vote_average', 'vote_count'])
+        features_df.to_parquet(features_path)
+        
+        return features_matrix
+
+# Cargar o generar la matriz de características
+features_matrix = cargar_o_generar_features_matrix()
+
+# Cargar el dataset de películas
+df_peliculas = pd.read_parquet('Datasets/dataset_completo.parquet')
+
 @app.get("/recomendacion/{titulo}")
 def recomendacion(titulo: str, n_recomendaciones: int = 5):
-    
+    # Normalizamos el título para la búsqueda
+    titulo = titulo.lower().strip()
+
+    # Verificamos si el título existe en el dataset
     if titulo not in df_peliculas['title'].str.lower().values:
         return {"mensaje": f"El título '{titulo}' no se encuentra en el dataset."}
     
-    idx = df_peliculas[df_directores['title'].str.lower() == titulo].index[0]
+    # Obtener el índice de la película
+    idx = df_peliculas[df_peliculas['title'].str.lower() == titulo].index[0]
+    
+    # Calcular las similitudes utilizando la matriz de características
     cosine_similarities = cosine_similarity([features_matrix[idx]], features_matrix).flatten()
     
-    similar_indices = cosine_similarities.argsort()[::-1][1:]  # Excluye la película original
+    # Obtener los índices de las películas más similares (excluyendo la película original)
+    similar_indices = cosine_similarities.argsort()[::-1][1:]
     recomendaciones = []
     
+    # Agregar las películas recomendadas
     for index in similar_indices:
         pelicula = df_peliculas.iloc[index]['title']
         if pelicula not in recomendaciones:
