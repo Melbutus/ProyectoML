@@ -16,7 +16,6 @@ El rol consistió en hacer el labor de un **Data Scientist**, diseñando y despl
 
 ## Instalación 
 - Librerías necesarias: `pandas`, `numpy`, `scikit-learn`, `fastapi`, `uvicorn`
-### Instalación:
 
 1. Clonar el repositorio:
    ```git clone https://github.com/usuario/proyecto-recomendacion-peliculas.git```
