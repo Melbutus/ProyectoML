@@ -6,16 +6,11 @@ Este proyecto inicial tiene como objetivo desarrollar un sistema de recomendaci�
 ![image](https://github.com/user-attachments/assets/31ae1710-f946-41f4-8c5e-6a7418cfeb88)
 
 ## Tabla de Contenido
-
-- [Introducción](#introducción)
 - [Contexto](Contexto)
 - [Instalación](#instalación)
 - [Proceso de trabajo](#Proceso-de-trabajo)
 - [Datos y Fuentes](#datos-y-fuentes)
   
-## Introducción
-El objetivo de este proyecto es implementar un sistema de recomendación de películas basado en la similitud de ciertas características. El sistema está disponible a través de una API para consultas y tiene la capacidad de identificar patrones en los datos relacionados con actores, directores y otras métricas clave. Todo esto está implementado en una API, que permite consultas sobre recomendaciones y estadísticas detalladas. Finalmente el objetivo fue hacer un deploy de la misma con render.
-
 ## Contexto
 El rol consistió en hacer el labor de un **Data Scientist**, diseñando y desplegando este sistema de recomendación desde cero. Partimos de datos desorganizados y sin procesar, por lo que también se ha implementado un proceso de ETL (Extracción, Transformación y Carga) para limpiar y estructurar los datos. 
 
