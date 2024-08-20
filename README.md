@@ -1,4 +1,4 @@
-# Proyecto de Recomendación de Películas para Plataforma de Streaming
+# Proyecto de Recomendación de Películas
 
 Este proyecto inicial tiene como objetivo desarrollar un sistema de recomendación de películas para una start-up de agregación de plataformas de streaming. El sistema aprovecha un modelo de Machine Learning para recomendar películas basadas en similitudes de características como calificaciones y popularidad. Se desplegó una API que permite realizar consultas sobre recomendaciones y obtener estadísticas de películas, directores y actores.
 
