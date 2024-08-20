@@ -9,11 +9,7 @@ Este proyecto tiene como objetivo construir un sistema de recomendación de pel�
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Uso y Ejecución](#uso-y-ejecución)
 - [Datos y Fuentes](#datos-y-fuentes)
-- [Metodología](#metodología)
-- [Resultados y Conclusiones](#resultados-y-conclusiones)
-- [Contribución y Colaboración](#contribución-y-colaboración)
-- [Licencia](#licencia)
-
+  
 ## Introducción
 
 El objetivo de este proyecto es implementar un sistema de recomendación de películas basado en la similitud de ciertas características de películas. El sistema está disponible a través de una API para consultas y tiene la capacidad de identificar patrones en los datos relacionados con actores, directores y otras métricas clave. Todo esto está implementado en una API, que permite consultas sobre recomendaciones y estadísticas detalladas. Finalmente el objetivo fue hacer un deploy de la mism acon render.
@@ -108,7 +104,3 @@ Las contribuciones son bienvenidas. Si deseas colaborar, puedes abrir un pull re
 - + [Dataset](https://drive.google.com/drive/folders/1X_LdCoGTHJDbD28_dJTxaD4fVuQC9Wt5?usp=drive_link): Carpeta con los 2 archivos (movies_dataset.csv y credits.csv).
 + [Diccionario de datos](https://docs.google.com/spreadsheets/d/1QkHH5er-74Bpk122tJxy_0D49pJMIwKLurByOfmxzho/edit#gid=0)
 <br/>
-
-## Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
