@@ -57,27 +57,52 @@ def cantidad_filmaciones_dia(dia: str):
 # 3. Score por título
 @app.get("/score_titulo/{titulo}")
 def score_titulo(titulo: str):
-    film = df_score[df_score['title'].str.contains(titulo, case=False, na=False)]
-    
-    if not film.empty:
-        year = film['release_date'].dt.year.values[0] if pd.notnull(film['release_date'].values[0]) else "Año no disponible"
-        score = film['vote_average'].values[0] if pd.notnull(film['vote_average'].values[0]) else "Score no disponible"
-        popularity = film['popularity'].values[0] if pd.notnull(film['popularity'].values[0]) else "Popularidad no disponible"
-        return {"mensaje": f"La película '{titulo}' fue estrenada en el año {year} con un score de {score} y una popularidad de {popularity}"}
-    return {"mensaje": "Película no encontrada"}
+    try:
+        # Buscar la película en el dataset filtrando por título
+        film = df_score[df_score['title'].str.contains(titulo, case=False, na=False)]
+
+        # Verificar si se encontró la película
+        if not film.empty:
+            # Obtener el año de estreno, score (promedio de votos) y popularidad, manejando valores nulos
+            year = int(film['release_date'].dt.year.values[0]) if pd.notnull(film['release_date'].values[0]) else "Año no disponible"
+            score = round(film['vote_average'].values[0], 1) if pd.notnull(film['vote_average'].values[0]) else "Score no disponible"
+            popularity = round(film['popularity'].values[0], 2) if pd.notnull(film['popularity'].values[0]) else "Popularidad no disponible"
+
+            # Devolver el mensaje con el formato deseado
+            return {
+                "mensaje": f"La película '{titulo}' fue estrenada en el año {year} con un promedio de votos (score) de {score} y una popularidad de {popularity}."
+            }
+        else:
+            return {"mensaje": "Película no encontrada"}
+
+    except Exception as e:
+        return {"mensaje": f"Error interno: {str(e)}"}
 
 # 4. Votos por título
 @app.get("/votos_titulo/{titulo}")
 def votos_titulo(titulo: str):
     try:
+        # Normalizar el título ingresado
         titulo_normalizado = titulo.strip().lower()
+
+        # Buscar la película en el dataset
         film = df_votos[df_votos['title'].str.lower().str.strip() == titulo_normalizado]
-        
+
+        # Verificar si se encontró la película
         if not film.empty:
-            vote_count = film['vote_count'].values[0]
-            vote_average = film['vote_average'].values[0]
-            return {"mensaje": f"La película '{titulo}' cuenta con {vote_count} valoraciones, con un promedio de {vote_average}"}
-        return {"mensaje": "Película no encontrada"}
+            # Obtener el año de estreno, cantidad de votos y el promedio de votaciones
+            release_year = int(film['release_year'].values[0]) if 'release_year' in film.columns and pd.notnull(film['release_year'].values[0]) else "Año no disponible"
+            vote_count = int(film['vote_count'].values[0]) if pd.notnull(film['vote_count'].values[0]) else 0
+            vote_average = round(film['vote_average'].values[0], 1) if pd.notnull(film['vote_average'].values[0]) else 0
+
+            # Formar el mensaje de salida
+            return {
+                "mensaje": f"La película '{titulo}' fue estrenada en el año {release_year}. "
+                           f"La misma cuenta con un total de {vote_count} valoraciones, "
+                           f"con un promedio de {vote_average}."
+            }
+        else:
+            return {"mensaje": "Película no encontrada"}
 
     except Exception as e:
         return {"mensaje": f"Error interno: {str(e)}"}
@@ -92,16 +117,18 @@ def get_actor(nombre_actor: str):
         if actor_films.empty:
             return {"mensaje": f"Actor '{nombre_actor}' no encontrado."}
 
-        count = actor_films['title'].nunique()  # Contar las películas únicas
-        total_revenue = actor_films['revenue'].sum()
-        total_budget = actor_films['budget'].sum()
+        # Contar la cantidad de películas únicas
+        count = actor_films['title'].nunique()  
+        
+        # Sumar el retorno total y calcular el promedio de retorno
+        total_return = actor_films['return'].sum()  
+        promedio_retorno = total_return / count if count > 0 else 0
 
-        # Calcular el retorno total y el promedio de retorno
-        retorno_total = total_revenue / total_budget if total_budget > 0 else 0
-        retorno_promedio = retorno_total if count > 0 else 0
-
+        # Generar el mensaje de salida con el formato solicitado
         return {
-            "mensaje": f"El actor '{nombre_actor}' ha participado en {count} filmaciones, con un retorno total de {retorno_total:.2f} y un promedio de {retorno_promedio:.2f} por filmación."
+            "mensaje": f"El actor '{nombre_actor}' ha participado de {count} filmaciones, "
+                       f"el mismo ha conseguido un retorno de {total_return:.2f} "
+                       f"con un promedio de {promedio_retorno:.2f} por filmación."
         }
 
     except Exception as e:
@@ -199,28 +226,38 @@ def recomendacion(titulo: str, n_recomendaciones: int = 5):
     try:
         # Normalizamos el título para la búsqueda
         titulo_normalizado = limpiar_texto_completo(titulo)
-        
+
         # Verificar si el título existe en el dataset
-        pelicula_idx = df_peliculas[df_peliculas['title_normalizado'].str.contains(titulo_normalizado, case=False, na=False)].index
-        
+        pelicula_idx = df_peliculas[df_peliculas['title'].str.contains(titulo_normalizado, case=False, na=False)].index
+
         if pelicula_idx.empty:
             return {"mensaje": f"El título '{titulo}' no se encuentra en el dataset."}
-        
+
+        # Resetear el índice para asegurar que está alineado con la matriz de características
+        df_peliculas.reset_index(drop=True, inplace=True)
+
         # Obtener el índice de la película en el dataset
         idx = pelicula_idx[0]
-        
+
+        # Asegurarse de que el índice esté dentro de los límites de la matriz de características
+        if idx >= len(features_matrix):
+            return {"mensaje": "Error: el índice de la película está fuera de los límites del conjunto de datos."}
+
         # Calcular las similitudes utilizando la matriz de características
         cosine_similarities = cosine_similarity([features_matrix[idx]], features_matrix).flatten()
-        
+
         # Verificar que el número de recomendaciones sea válido
         n_recomendaciones = min(n_recomendaciones, len(cosine_similarities) - 1)
-        
+
         # Obtener los índices de las películas más similares (excluyendo la película original)
         similar_indices = cosine_similarities.argsort()[::-1][1:n_recomendaciones + 1]
-        
+
+        # Verificar que los índices de recomendaciones están dentro del rango de filas del DataFrame
+        similar_indices = [i for i in similar_indices if i < len(df_peliculas)]
+
         # Obtener los títulos de las películas recomendadas
         recomendaciones = df_peliculas['title'].iloc[similar_indices].tolist()
-        
+
         return {"recomendaciones": recomendaciones}
 
     except Exception as e:

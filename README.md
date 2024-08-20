@@ -53,34 +53,35 @@ Para ejecutar el ETL, EDA y el modelo de machine learning, abre los notebooks en
 ```uvicorn src.main:app --reload```
 
 ### ETL (Extracción, Transformación y Carga)
-#### Procesos Relevantes:
-Se realiza la limpieza de columnas innecesarias como "original_title", "homepage", "adult", "imdb_id", "video", "poster_path", 'tagline' del dataframe original y luego se realiza una copia del mismo con las columnas que se creen necesarias como 'genres', 'belongs_to_collection', 'release_date', 'original_language', 'popularity', 'production_companies', 'production_countries', 'runtime', 'spoken_languages', 'id', 'vote_average', 'vote_count'. A continuación se extraen y limpian campos complejos que se encuentran en listas de diccionarios como los titulos de las peliculas, géneros, empresas de producción, países e idiomas hablados. Se combinan los datasets de películas y créditos para reducirlos y unificar la información de actores y directores. A posterior se crean datasets específicos para lo que serán los endpoints de la API.
+Se eliminan columnas innecesarias como original_title, homepage, adult, imdb_id, video, poster_path, tagline, status, runtime, overview del dataframe original por considerarlas como NO indispensables para el modelo y otras por ser redundantes.
+Se realiza una copia del dataset original con las columnas que se creen necesarias como genres, belongs_to_collection, release_date, original_language, popularity, production_companies, production_countries, spoken_languages, id, vote_average, vote_count. A partir de ellos se extraen y limpian campos que se encuentran en listas de diccionarios/ anidados. Se combinan los datasets de películas y créditos para reducirlos y unificar la información de movies y crew. Finalmente se crean datasets específicos con la información relevante para cada función de la API.
 
 #### Criterios Clave:
-Se eliminaron duplicados para evitar múltiples registros de la misma película.
-Se extrajeron los nombres de actores, directores, fechas, etc. de listas anidadas.
-Dependiendo las columnas se cambiaron los nulos por 0 o simplemente se los eliminó.
-Se hizo un filtrado general para no contar con datos nulos o no disponibles. Además de limpiar los espacios, convertir a minúsculas, chequear sus formatos.
-Se transformaron los datos para que el ingreso sea independiente del uso de minúsculas o mayúsculas.
+Se hizo un filtrado general para no contar con datos nulos o no disponibles.
+Se limpiaron los espacios, se convirtieron los textos a minúsculas, y se verificaron los formatos.
+Se transformaron los datos para que el ingreso sea independiente del uso de mayúsculas o minúsculas.
+Se crearon funciones para extraer los datos de las columnas anidadas.
+Los valores negativos del campo revenue fueron convertidos a positivos para no perder datos. Los valores nulos en los campos budget y revenue fueron rellenados con ceros.
+Se eliminó cualquier valor nulo en la columna release_date y se creó un nuevo campo release_year a partir de release_date.
 
 ### EDA (Análisis Exploratorio de Datos)
-#### Objetivos:
+#### objetivos:
 Evaluar la cantidad y calidad de los datos disponibles.
-Determinar el idioma más frecuente en las películas, con el objetivo de filtrar y simplificar el dataset basado en este criterio.
-Identificar patrones como los actores y directores más recurrentes en las películas, así como las palabras más comunes en los títulos.
-Examinar la distribución de valores en campos clave, como el presupuesto, la recaudación, y la popularidad.
-Generar visualizaciones que faciliten la comprensión del dataset y los datos específicos para cada endpoint.
-
+Filtrar el dataset en función del idioma más frecuente (inglés) para optimizar el modelo.
+Identificar patrones como actores y directores recurrentes en películas populares.
+Examinar la distribución de valores en los campos budget, revenue, y popularity.
+Generar visualizaciones que faciliten la comprensión del dataset y de los datos específicos para cada endpoint.
 #### Conclusiones Relevantes:
-El análisis reveló que el inglés era el idioma predominante en la mayoría de las películas, por lo cual se decidió filtrar el dataset exclusivamente en este idioma, optimizando el modelo y sus resultados.
-Se identificó una alta concentración de ciertos actores recurrentes en las películas más populares, lo cual podría influir en la representación de dichos actores en las recomendaciones.
+El análisis reveló que el inglés era el idioma predominante en la mayoría de las películas, por lo que se decidió filtrar el dataset exclusivamente en este idioma, optimizando el modelo y sus resultados. Además se constató que los generos más destacados eran comedia, drama, romance. Por otro lado, había mayor cantidad de peliculas luego de los 80' pero se decidió NO filtrar por genero y año, ya que con los filtros anteriores se redujo ampliamente el numero de peliculas.
 
 ### Modelo de Recomendación
-El modelo de recomendación se fundamenta en la similitud de películas, utilizando métricas como vote_average y vote_count. A través de una matriz de características normalizadas, se calculan las similitudes entre las mismas, lo que permite recomendar las más similares a una película determinada.
+Este modelo de recomendación se basa en la similitud de características de películas y utiliza la similitud del coseno para identificar películas similares. El modelo recomienda películas basadas en características como vote_average, vote_count, y popularity.
 
 #### Criterios del Modelo:
-Se utiliza cosine_similarity para medir la distancia entre las películas.
-Las recomendaciones se basan en los títulos más cercanos en términos de características.
+Dada una película de entrada, se busca su título en el dataset y se obtiene su índice.
+Luego, se calculan las similitudes de coseno entre esa película y todas las demás.
+Se seleccionan las n_recomendaciones más similares, excluyendo la película original.
+Finalmente, se devuelven los títulos de las películas recomendadas.
 
 ### Endpoints de la API:
 #### /recomendacion/{titulo}
@@ -105,3 +106,7 @@ Las contribuciones son bienvenidas. Si deseas colaborar, puedes abrir un pull re
 - + [Dataset](https://drive.google.com/drive/folders/1X_LdCoGTHJDbD28_dJTxaD4fVuQC9Wt5?usp=drive_link): Carpeta con los 2 archivos (movies_dataset.csv y credits.csv).
 + [Diccionario de datos](https://docs.google.com/spreadsheets/d/1QkHH5er-74Bpk122tJxy_0D49pJMIwKLurByOfmxzho/edit#gid=0)
 <br/>
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
