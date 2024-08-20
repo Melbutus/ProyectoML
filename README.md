@@ -17,6 +17,7 @@ Este proyecto tiene como objetivo construir un sistema de recomendación de pel�
 ## Introducción
 
 El objetivo de este proyecto es implementar un sistema de recomendación de películas basado en la similitud de ciertas características de películas. El sistema está disponible a través de una API para consultas y tiene la capacidad de identificar patrones en los datos relacionados con actores, directores y otras métricas clave. Todo esto está implementado en una API, que permite consultas sobre recomendaciones y estadísticas detalladas. Finalmente el objetivo fue hacer un deploy de la mism acon render.
+
 ![image](https://github.com/user-attachments/assets/31ae1710-f946-41f4-8c5e-6a7418cfeb88)
 
 ## Instalación y Requisitos
