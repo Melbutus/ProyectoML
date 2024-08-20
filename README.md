@@ -1,26 +1,26 @@
-# Proyecto de Recomendación de Películas
+# Proyecto de Recomendación de Películas para Plataforma de Streaming
 
-Este proyecto tiene como objetivo construir un sistema de recomendación de películas utilizando datos obtenidos de un dataset de películas y créditos cinematográficos. Se aplica un proceso de ETL (Extracción, Transformación y Carga) seguido de un análisis exploratorio de datos (EDA) y la construcción de un modelo de recomendación desplegado a través de una API. Los endpoints permiten la consulta de recomendaciones, detalles de películas y estadísticas de directores y actores.
+Este proyecto inicial tiene como objetivo desarrollar un sistema de recomendación de películas para una start-up de agregación de plataformas de streaming. El sistema aprovecha un modelo de Machine Learning para recomendar películas basadas en similitudes de características como calificaciones y popularidad. Se desplegó una API que permite realizar consultas sobre recomendaciones y obtener estadísticas de películas, directores y actores.
+
+
+![image](https://github.com/user-attachments/assets/31ae1710-f946-41f4-8c5e-6a7418cfeb88)
 
 ## Tabla de Contenido
 
 - [Introducción](#introducción)
-- [Instalación y Requisitos](#instalación-y-requisitos)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Uso y Ejecución](#uso-y-ejecución)
+- [Contexto](Contexto)
+- [Instalación](#instalación)
+- [Proceso de trabajo](#Proceso-de-trabajo)
+- [Endpoints de la API](Endpoints-de-la-API)
 - [Datos y Fuentes](#datos-y-fuentes)
   
 ## Introducción
+El objetivo de este proyecto es implementar un sistema de recomendación de películas basado en la similitud de ciertas características. El sistema está disponible a través de una API para consultas y tiene la capacidad de identificar patrones en los datos relacionados con actores, directores y otras métricas clave. Todo esto está implementado en una API, que permite consultas sobre recomendaciones y estadísticas detalladas. Finalmente el objetivo fue hacer un deploy de la misma con render.
 
-El objetivo de este proyecto es implementar un sistema de recomendación de películas basado en la similitud de ciertas características de películas. El sistema está disponible a través de una API para consultas y tiene la capacidad de identificar patrones en los datos relacionados con actores, directores y otras métricas clave. Todo esto está implementado en una API, que permite consultas sobre recomendaciones y estadísticas detalladas. Finalmente el objetivo fue hacer un deploy de la mism acon render.
+## Contexto
+El rol consistió en hacer el labor de un **Data Scientist**, diseñando y desplegando este sistema de recomendación desde cero. Partimos de datos desorganizados y sin procesar, por lo que también se ha implementado un proceso de ETL (Extracción, Transformación y Carga) para limpiar y estructurar los datos. 
 
-![image](https://github.com/user-attachments/assets/31ae1710-f946-41f4-8c5e-6a7418cfeb88)
-
-## Instalación y Requisitos
-
-### Requisitos
-
-- **Python 3.7 o superior**
+## Instalación 
 - Librerías necesarias: `pandas`, `numpy`, `scikit-learn`, `fastapi`, `uvicorn`
 ### Instalación:
 
@@ -37,19 +37,7 @@ macOS/Linux: source ```venv/bin/activate```
 4. Instalar las dependencias:
 pip install ```-r requirements.txt```
 
-### Estructura del Proyecto
-Notebooks/: Contiene el ETL y modelo de machine learning.
-Reports/: Contiene el EDA 
-Datasets/: Archivos de datos procesados en formato Parquet.
-src/: Código fuente del proyecto, incluyendo el código de la API.
-README.md: Documentación del proyecto.
-
-### Uso y Ejecución
-Para ejecutar el ETL, EDA y el modelo de machine learning, abre los notebooks en la carpeta notebooks/.
-
-### Para iniciar la API:
-```uvicorn src.main:app --reload```
-
+## Proceso de trabajo
 ### ETL (Extracción, Transformación y Carga)
 Se eliminan columnas innecesarias como original_title, homepage, adult, imdb_id, video, poster_path, tagline, status, runtime, overview del dataframe original por considerarlas como NO indispensables para el modelo y otras por ser redundantes.
 Se realiza una copia del dataset original con las columnas que se creen necesarias como genres, belongs_to_collection, release_date, original_language, popularity, production_companies, production_countries, spoken_languages, id, vote_average, vote_count. A partir de ellos se extraen y limpian campos que se encuentran en listas de diccionarios/ anidados. Se combinan los datasets de películas y créditos para reducirlos y unificar la información de movies y crew. Finalmente se crean datasets específicos con la información relevante para cada función de la API.
@@ -74,7 +62,6 @@ El análisis reveló que el inglés era el idioma predominante en la mayoría de
 
 ### Modelo de Recomendación
 Este modelo de recomendación se basa en la similitud de características de películas y utiliza la similitud del coseno para identificar películas similares. El modelo recomienda películas basadas en características como vote_average, vote_count, y popularity.
-
 #### Criterios del Modelo:
 Dada una película de entrada, se busca su título en el dataset y se obtiene su índice.
 Luego, se calculan las similitudes de coseno entre esa película y todas las demás.
