@@ -11,7 +11,6 @@ Este proyecto inicial tiene como objetivo desarrollar un sistema de recomendaci�
 - [Contexto](Contexto)
 - [Instalación](#instalación)
 - [Proceso de trabajo](#Proceso-de-trabajo)
-- [Endpoints de la API](Endpoints-de-la-API)
 - [Datos y Fuentes](#datos-y-fuentes)
   
 ## Introducción
@@ -67,25 +66,6 @@ Dada una película de entrada, se busca su título en el dataset y se obtiene su
 Luego, se calculan las similitudes de coseno entre esa película y todas las demás.
 Se seleccionan las n_recomendaciones más similares, excluyendo la película original.
 Finalmente, se devuelven los títulos de las películas recomendadas.
-
-### Endpoints de la API:
-#### /recomendacion/{titulo}
-Retorna una lista de películas recomendadas basadas en la similitud con el título dado.
-
-#### /nombre_actor/{actor}
-Proporciona estadísticas del actor, incluyendo el retorno promedio de sus películas.
-
-#### /nombre_director/{director}
-Devuelve información detallada del director, incluyendo el éxito medido por el retorno.
-
-#### /score_titulo/{titulo}
-Proporciona el puntaje promedio y el número de votaciones de la película especificada.
-
-#### /votos_titulo/{titulo}
-Retorna la cantidad de votos y el puntaje de una película si cuenta con suficiente número de valoraciones.
-
-### Contribución y Colaboración
-Las contribuciones son bienvenidas. Si deseas colaborar, puedes abrir un pull request o reportar problemas en el repositorio.
 
 ## **Fuente de datos**
 - + [Dataset](https://drive.google.com/drive/folders/1X_LdCoGTHJDbD28_dJTxaD4fVuQC9Wt5?usp=drive_link): Carpeta con los 2 archivos (movies_dataset.csv y credits.csv).
